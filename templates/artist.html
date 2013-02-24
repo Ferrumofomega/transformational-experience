@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Artist Information for {{ data["name"] }}</title>
+
+  <link rel="shortcut icon" href="{{ url_for("static", filename="images/favicon.ico") }}" type="image/x-icon"/>
+  <link rel="stylesheet" href="{{ url_for("static", filename="stylesheets/foundation.min.css") }}">
+  <link rel="stylesheet" href="{{ url_for("static", filename="stylesheets/app.css") }}">
+  <link rel="stylesheet" href="{{ url_for("static", filename="stylesheets/nodes.css") }}">
+
+  <script src="{{ url_for("static", filename="javascripts/modernizr.foundation.js") }}"></script>
+  <script src="{{ url_for("static", filename="javascripts/d3.min.js") }}"></script>
+</head>
+<body>
+
+  <!-- title box -->
+  <div class="row" style="padding: 1em;">
+    <div class="twelve columns">
+      <a href="{{ url_for("index") }}">&larr; Try another search</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="twelve columns">
+
+
+      <div class="row">
+        <div class="four columns">
+          <div class="panel">
+            <h4>{{ data["name"] }}</h4>
+            {% if data["image_url"] %}
+            <img src="{{ data["image_url"] }}">
+            {% endif %}
+
+            <h5>Biographical Data</h5>
+            <ul class="no-bullet">
+              <!-- decade, birth-date, birth-name, birth-place, id, genre, lastfm_url -->
+              <!-- PopularityTier, popularity -->
+              <!-- need to do this better than a mess of if statements -->
+              {% if data["birth-name"] %}
+              <!-- because groups obvious have neither -->
+              <!-- assume if one exists, both exist since artist is a person we assume -->
+              <li><b>Birthname:</b> {{ data["birth-name"] }}</li>
+              <li><b>Birthdate:</b> {{ data["birth-date"] }}</li>
+              {% endif %}
+              {% if data["birth-place"] %}
+              <li><b>Birthplace:</b> {{ data["birth-place"] }}</li>
+              {% endif %}
+              <li><b>Decades:</b> {{ data["decade"] }}</li>
+              <li><b>Genre:</b> {{ data["genre"] }}</li>
+              <hr />
+            </ul>
+
+            <h5>Metadata</h5>
+            <ul class="no-bullet">
+              {% if data["PopularityTier"] %}
+              <li><b>Popularity Tier:</b> {{ data["PopularityTier"] }}</li>
+              {% endif %}
+              <li><b>Popularity:</b> {{ data["popularity"] }}</li>
+              <li><b>Senzari ID:</b> {{ data["id"] }}</li>
+              {% if data["lastfm_url"] %}
+              <li style="word-wrap: break-word;"><b>Last.fm URL:</b> <a href="{{ data["lastfm_url"] }}">{{ data["lastfm_url"] }}</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+
+        <!-- other information -->
+        <div class="eight columns">
+          {% if data["short-note"] %}
+          <!-- this is messy -->
+          <h3 style="padding-bottom: 1em;"><small><em>{{ data["short-note"] }}</em></small></h3>
+          <hr />
+          {% endif %}
+
+          <!-- VISUALIZATION -->
+          <div class="hide-for-small" id="graph">
+            <h3>Song Mood</h3>
+            <div style="margin-left: auto; margin-right: auto;">
+              <script>
+                var width = 600,
+                    height = 350
+
+                var svg = d3.select("#graph").append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+
+                var force = d3.layout.force()
+                    .gravity(.05)
+                    .distance(100)
+                    .charge(-100)
+                    .size([width, height]);
+
+                // url_for('static', filename='nodesold.json')
+                // url_for('route_json_files', uuid=json_uuid, _external=True)
+                d3.json("{{ json_uuid }}", function(json) {
+                  force
+                      .nodes(json.nodes)
+                      .links(json.links)
+                      .start();
+
+                  var link = svg.selectAll(".link")
+                      .data(json.links)
+                    .enter().append("line")
+                      .attr("class", "link");
+
+                  var node = svg.selectAll(".node")
+                      .data(json.nodes)
+                    .enter().append("g")
+                      .attr("class", "node")
+                      .call(force.drag);
+
+                  node.append("circle")
+                      .attr("r", 6);                
+
+                  node.append("text")
+                      .attr("dx", 12)
+                      .attr("dy", ".35em")
+                      .text(function(d) { return d.name });
+
+                  force.on("tick", function() {
+                    link.attr("x1", function(d) { return d.source.x; })
+                        .attr("y1", function(d) { return d.source.y; })
+                        .attr("x2", function(d) { return d.target.x; })
+                        .attr("y2", function(d) { return d.target.y; });
+
+                    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+                  });
+                });  
+              </script>
+            </div>
+          </div>
+
+
+          <!-- list popular tracks -->
+          <!-- TODO: incorporate with {youtube, spotify, grooveshark, musicbrainz, rovio, echonest, wikipedia} -->
+          <h3>You might know them from&hellip;</h3>
+            <ul class="accordion">
+
+              {% for d in tdata %}
+              {% if loop.index <= 5 %}
+              <li>
+                <div class="title">
+                  <h5>{{ d["name"] }}</h5>
+                </div>
+                <div class="content">
+                  <ul>
+                    <!-- bpm_value, album, artist_name, date_released -->
+                    <!-- timbre, complexity, detail_url -->
+                    <!-- mood -->
+                    <li><b>Date Released:</b> {{ d["date_released"] }}</li>
+                    {% if d["bpm_value"] %}<li><b>BPM:</b> {{ d["bpm_value"] }} </li>{% endif %}
+                    {% if d["album"] %}<li><b>Album:</b> {{ d["album"] }}</li>{% endif %}
+                    <li><b>Artist Name:</b> {{ d["artist_name"] }}</li>
+
+                    {% if d["timbre"] %}<li><b>Timbre:</b> {{ d["timbre"] }}</li>{% endif %}
+                    {% if d["complexity"] %}<li><b>Complexity:</b> {{ d["complexity"] }}</li>{% endif %}
+                    <li><b>Detail URL:</b> <a href="{{ d["detail_url"] }}">{{ d["detail_url"] }}</a></li>
+                    {% if d["mood"] %}<li><b>Moods:</b> {{ d["mood"] }}</li>{% endif %}
+                    <li><b><a href="{{ "http://www.youtube.com/results?search_query=%s" | format(d["name"] + " by " + data["name"]) | replace(" ", "+")}}">Search YouTube</a></b></li>
+
+                  </ul>
+                </div>
+              </li>
+              {% endif %}
+              {% endfor %}
+
+            </ul>
+          <hr />
+
+          <h3>Similar Artists</h3>
+          <ul class="inline-list">
+            {% for x in sim %}
+            <li>
+              <a href="{{ url_for('artist_page', name=x["matching_artist_id"]) }}">{{ x["sd_name"] }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+
+
+          <hr />          
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="twelve columns">
+          <h3>All JSON</h3>
+          <ul class="accordion">
+            <li>
+              <div class="title">
+                <h5>Artist Data</h5>
+              </div>
+              <div class="content">
+              {{ pygmented["adata"] | safe }}
+              </div>  
+            </li>
+
+            <li>
+              <div class="title">
+                <h5>Track Data</h5>
+              </div>
+              <div class="content">
+              {{ pygmented["tdata"] | safe }}
+              </div>  
+            </li>
+
+            <li>
+              <div class="title">
+                <h5>Similarity Data</h5>
+              </div>
+              <div class="content">
+              {{ pygmented["sdata"] | safe }}
+              </div>  
+            </li>            
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  
+  <script src="{{ url_for("static", filename="javascripts/jquery.js") }}"></script>
+  <script src="{{ url_for("static", filename="javascripts/foundation.min.js") }}"></script>
+  
+  <!-- Initialize JS Plugins -->
+  <script src="{{ url_for("static", filename="javascripts/app.js") }}"></script>
+
+  
+    <script>
+    $(window).load(function(){
+      $("#featured").orbit();
+    });
+    </script> 
+  
+</body>
+</html>
