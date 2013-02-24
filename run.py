@@ -119,6 +119,10 @@ def generate_mood_json(json_list):
 
 
 def get_mood_json(json_list):
+    """
+    we save the json to a file because d3.js likes that and we are obedient
+    to its whims
+    """
     # generate data
     j = generate_mood_json(json_list)
     uuid = str(uuid4()) + ".json"
@@ -136,6 +140,8 @@ def artist_page(name=None):
     """
     generate data, render template
     """
+
+    # regular expressions: always almost never not a good idea
     match = search(r"^artist-\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$", name)
 
     if match:
@@ -175,7 +181,7 @@ def index():
     return render_template("index.html", form=form)
 
 if __name__ == "__main__":
-    app.debug = True
+    app.debug = False
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
     # app.debug = True
