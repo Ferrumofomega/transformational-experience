@@ -122,7 +122,7 @@ def get_mood_json(json_list):
     # generate data
     j = generate_mood_json(json_list)
     uuid = str(uuid4()) + ".json"
-    loc = os.path.join(os.path.dirname(__file__), "static/json", uuid)
+    loc = os.path.join(os.getcwd(), "static/json", uuid)
 
     # save data
     with open(loc, "w") as f:
