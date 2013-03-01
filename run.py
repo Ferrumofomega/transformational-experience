@@ -85,7 +85,7 @@ def generate_mood_json(json_list):
     # get name nodes
     for d in json_list:
         try:
-            mood_nodes.append(d["mood"].split(" / "))
+            mood_nodes.append(d["bmat_mood"].split(" / "))
             name_nodes.append({"name": d["name"]})
         except KeyError:
             pass
