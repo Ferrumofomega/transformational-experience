@@ -40,9 +40,9 @@ from bokeh.io import show
 from bokeh.embed import components
 import boto
 import pandas
-
-from s3_util import download_file_from_s3_bucket
-from s3_util import s3_conn
+import boto.s3.connection
+import settings
+from boto.s3.key import Key
 
 bv = bokeh.__version__
 
@@ -51,8 +51,7 @@ bv = bokeh.__version__
 app = Flask(__name__)
 app.vars = {}
 
-file_name = 'quiz_1.csv'
-bucket_name = 'transformational-experience'
+
 
 
 @app.route('/')
@@ -77,9 +76,13 @@ def index():
 
 @app.route('/graph', methods=['GET', 'POST'])
 def graph():
+    file_name = 'quiz_1.csv'
+    bucket_name = 'transformational-experience'
+    S3_ACCESS_KEY = 'AKIAJDYOAIVONGLUGWEA'
+    S3_SECRET_KEY = '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'
     # # Request data from S3 and get into pandas
     # # --------------------------------------------|
-    csv = download_file_from_s3_bucket(file_name, bucket_name, s3_conn)
+    csv = download_file_from_s3_bucket(file_name, bucket_name, s3_conn())
     df = pandas.read_csv(csv)
     df = df.loc[len(df)] = [app.vars['name'], app.vars['transformational']]
 
@@ -120,6 +123,38 @@ def graph():
 @app.errorhandler(500)
 def error_handler(e):
     return render_template('error.html', transformational=app.vars['transformational'], name=app.vars['name'])
+
+
+NAME = 'S3 BUCKET MANAGEMENT'
+
+
+def s3_conn():
+    try:
+        ## connects to the AWS Freebird S3 bucket
+        s3_conn = boto.connect_s3(aws_access_key_id=settings.S3_ACCESS_KEY, aws_secret_access_key=settings.S3_SECRET_KEY)
+        return s3_conn
+    except boto.s3.connection.HostRequiredError, boto.s3.connection.BotoClientError:
+        print 'Connection Failed for {0}'.format(NAME)
+        return None
+
+
+def upload_file_to_s3_bucket(fl, bucket_name, s3con):
+    ## This uploads a give file to a given bucket for a given s3con
+    bucket = s3con.get_bucket(bucket_name)
+    key = Key(bucket)
+    key.key = fl.split('\\')[-1]
+    key.name = fl.split('\\')[-1]
+    key.set_contents_from_filename(fl)
+    key.key = fl.split('\\')[-1]
+
+
+def download_file_from_s3_bucket(fl, bucket_name, s3con):
+    ## This uploads a give file to a given bucket for a given s3con
+    bucket = s3con.get_bucket(bucket_name)
+    key = Key(bucket, fl)
+    headers = {}
+    quiz = key.get_contents_to_filename(fl, headers)
+    return quiz
 
 
 if __name__ == '__main__':
