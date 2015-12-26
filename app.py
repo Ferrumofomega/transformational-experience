@@ -41,7 +41,6 @@ from bokeh.embed import components
 import boto
 import pandas
 import boto.s3.connection
-import settings
 from boto.s3.key import Key
 
 bv = bokeh.__version__
