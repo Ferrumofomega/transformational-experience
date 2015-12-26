@@ -71,7 +71,6 @@ def index():
         try:
             app.vars['tag'] = 'The User Selected %s' % app.vars['transformational']
         except ValueError:
-            app.vars['start_year'] = ''
             app.vars['tag'] = 'Response not recognized'
         return redirect('/graph')
 
