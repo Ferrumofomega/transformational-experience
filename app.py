@@ -42,6 +42,7 @@ import boto
 import pandas
 import boto.s3.connection
 from boto.s3.key import Key
+import os
 
 bv = bokeh.__version__
 
@@ -77,8 +78,7 @@ def index():
 def graph():
     file_name = 'quiz_1.csv'
     bucket_name = 'transformational-experience'
-    S3_ACCESS_KEY = 'AKIAJDYOAIVONGLUGWEA'
-    S3_SECRET_KEY = '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'
+
     # # Request data from S3 and get into pandas
     # # --------------------------------------------|
     csv = download_file_from_s3_bucket(file_name, bucket_name, s3_conn())
@@ -130,7 +130,9 @@ NAME = 'S3 BUCKET MANAGEMENT'
 def s3_conn():
     try:
         ## connects to the AWS Freebird S3 bucket
-        s3_conn = boto.connect_s3(aws_access_key_id=settings.S3_ACCESS_KEY, aws_secret_access_key=settings.S3_SECRET_KEY)
+        S3_ACCESS_KEY = os.environ['S3_KEY']
+        S3_SECRET_KEY = os.environ['S3_SECRET']
+        s3_conn = boto.connect_s3(aws_access_key_id=S3_ACCESS_KEY, aws_secret_access_key=S3_SECRET_KEY)
         return s3_conn
     except boto.s3.connection.HostRequiredError, boto.s3.connection.BotoClientError:
         print 'Connection Failed for {0}'.format(NAME)
