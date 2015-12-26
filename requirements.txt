@@ -1,9 +1,0 @@
-Flask==0.9
-Flask-WTF==0.8.2
-Jinja2==2.6
-Pygments==1.6
-WTForms==1.0.3
-Werkzeug==0.8.3
-argparse==1.2.1
-requests==1.1.0
-wsgiref==0.1.2
