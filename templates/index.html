@@ -1,52 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Quandl Tracker</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	</head>
+	<div class=page>
+  			<h1>Quandl Stock Tracker</h1>
+  			<div class=metanav>
 
-<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width" />
+    			<h2>Enter a stock ticker (eg. GOOG), and check desired features.</h2>
 
-  <title>Senzari Search</title>
+    			<form id='input' method='post' action='index'>
+	  			<p>
+					Ticker symbol: <input type='text' name='ticker' />
+	  			</p>
+	  			<p>
+					Start year: <input type='text' name='year' />
+					<br><i>*defaults to first year of Quandl record</i>
+	  			</p>
+	  			<p>
+	  				<input type="checkbox" name='feat1' value='Open'>Opening price<br>
+					<input type="checkbox" name='feat2' value='Close'>Closing price<br>
+					<input type="checkbox" name='feat3' value='Range'>Range (High/Low)<br>
+	  			</p>
+	  			<p>
+	    			<input type="submit" value="Submit">
+	  			</p>
+				</form>
 
-  <link rel="shortcut icon" href="{{ url_for("static", filename="images/favicon.ico") }}" type="image/x-icon"/>
-  <link rel="stylesheet" href="{{ url_for("static", filename="stylesheets/foundation.min.css") }}">
-  <link rel="stylesheet" href="{{ url_for("static", filename="stylesheets/app.css") }}">
-
-  <script src="{{ url_for("static", filename="javascripts/modernizr.foundation.js") }}"></script>
-</head>
-<body style="position:absolute;width:400px;height:300px;z-index:15;top:50%;left:50%;margin:-200px 0 0 -200px;">
-  <div class="twelve columns">
-    <h1 style="text-align: center;">Senzari Search</h1>
-    <p>
-      Get information about an artist through the Senzari API.
-      <small>Please be gentle</small>
-    </p>
-
-    <form method="post" action="">
-      {{ form.hidden_tag() }}
-      <fieldset>
-        <legend>Search by Musician -or- Senzari Artist ID</legend>
-
-        {{ form.artist_name(placeholder="The Rolling Stones") }}
-        <button class="button" type="button submit" style="width: 100%;">Search!</button>
-      </fieldset>
-    </form>
-  </div>
-
-
-
-  <script src="{{ url_for("static", filename="javascripts/jquery.js") }}"></script>
-  <script src="{{ url_for("static", filename="javascripts/foundation.min.js") }}"></script>
-
-  <!-- Initialize JS Plugins -->
-  <script src="{{ url_for("static", filename="javascripts/app.js") }}"></script>
-
-
-    <script>
-    $(window).load(function(){
-      $("#featured").orbit();
-    });
-    </script>
-
-</body>
+  			</div>
+  			<div align="left">
+  			<p><i>See <a href="https://www.quandl.com/data/WIKI">www.quandl.com/data/WIKI</a></i> for database description</p>
+  			</div>
+		</div>
+	</body>
+</html>
