@@ -7,8 +7,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
 
-  <title>Senzari Search</title>
-  
+  <title>Transformational Experience</title>
+
   <link rel="shortcut icon" href="{{ url_for("static", filename="images/favicon.ico") }}" type="image/x-icon"/>
   <link rel="stylesheet" href="{{ url_for("static", filename="stylesheets/foundation.min.css") }}">
   <link rel="stylesheet" href="{{ url_for("static", filename="stylesheets/app.css") }}">
@@ -17,18 +17,18 @@
 </head>
 <body style="position:absolute;width:400px;height:300px;z-index:15;top:50%;left:50%;margin:-200px 0 0 -200px;">
   <div class="twelve columns">
-    <h1 style="text-align: center;">Senzari Search</h1>
+    <h1 style="text-align: center;">Transformational Experience</h1>
     <p>
-      Get information about an artist through the Senzari API.
+      Answer interesting questions. Learn something about yourself and others.
       <small>Please be gentle</small>
     </p>
 
     <form method="post" action="">
       {{ form.hidden_tag() }}
       <fieldset>
-        <legend>Search by Musician -or- Senzari Artist ID</legend>
+        <legend>Search for a question</legend>
 
-        {{ form.artist_name(placeholder="The Rolling Stones") }}
+        {{ form.artist_name(placeholder="Vampires") }}
         <button class="button" type="button submit" style="width: 100%;">Search!</button>
       </fieldset>
     </form>

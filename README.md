@@ -1,4 +1,4 @@
-# Senzari Search
+# Transformational Experience 
 
 See it in action [here](http://fathomless-citadel-1335.herokuapp.com/).
 
