@@ -3,7 +3,8 @@
 app.py 
 
 This repository contains a simpler Flask app that runs on Heroku.
-The app takes as input and displays a Bokeh plot of a CSV.
+The app takes as input and displays a Bokeh plot of the stock time series.
+
 Link to the finished app: https://transformational-experience.herokuapp.com
 
 The project was completed for the purpose of showing how to tie together some important concepts and
